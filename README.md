@@ -4,6 +4,6 @@
 
 	helm repo add strapdata https://charts.strapdata.com	
 
-## Update chart reprository
+## Update reprository
 
 	helm repo index . --url https://charts.strapdata.com
