@@ -2,12 +2,12 @@ apiVersion: v1
 entries:
   elassandra:
   - appVersion: 6.2.3.7
-    created: 2018-10-28T17:51:26.455555906+01:00
+    created: 2018-11-29T11:45:26.024126902+01:00
     description: Elassandra is a fork of Elasticsearch modified to run on top of Apache
       Cassandra in a scalable and resilient peer-to-peer architecture. Elasticsearch
       code is embedded in Cassanda nodes providing advanced search features on Cassandra
       tables and Cassandra serve as an Elasticsearch data and configuration store.
-    digest: 06a6d2de4751502791fa0b0ec3af2e88d131a85badd67feec512596c36798215
+    digest: 90960c268bad0f65b8608798d5350ced1fb989086991926d071e496c05a72b10
     engine: gotpl
     home: http://www.elassandra.io
     icon: https://github.com/strapdata/elassandra.io/blob/gh-pages/elassandra.svg
@@ -26,4 +26,4 @@ entries:
     urls:
     - https://charts.strapdata.com/elassandra-1.0.0.tgz
     version: 1.0.0
-generated: 2018-10-28T17:51:26.454335667+01:00
+generated: 2018-11-29T11:45:26.022619482+01:00
