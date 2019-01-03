@@ -59,7 +59,7 @@ config:
     cql: 9042
     thrift: 9160
     # If a JVM Agent is in place
-    # agent: 7500
+    agent: 7500
 
 ## Elasticsearch enable/disabled by setting the java main class to org.apache.cassandra.service.ElassandraDaemon/org.apache.cassandra.service.CassandraDaemon
 elasticsearch:
@@ -67,7 +67,7 @@ elasticsearch:
 
 # Enable JDWP for java debugging
 debug:
-  enabled: false
+  enabled: true
   port: 4242
 
 ## Liveness and Readiness probe values.
