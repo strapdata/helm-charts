@@ -102,13 +102,16 @@ securityContext:
 env:
   JVM_OPTS: "-Dcassandra.ring_delay_ms=60000 -XX:+ExitOnOutOfMemoryError -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2"
 
-## Extra volumes containing additional files required for fluent-bit to work
+## Extra config in configmap.
+configs: []
+
+## Extra volumes containing additional files.
 ## (eg. CA certificates)
 ## Ref: https://kubernetes.io/docs/concepts/storage/volumes/
 ##
 extraVolumes: []
 
-## Extra volume mounts for the fluent-bit pod.
+## Extra volume mounts elassandra pod.
 ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/
 ##
 extraVolumeMounts: []
