@@ -102,7 +102,7 @@ securityContext:
 env:
   JVM_OPTS: "-Dcassandra.ring_delay_ms=60000 -XX:+ExitOnOutOfMemoryError -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2"
 
-## Extra config files.
+## Extra config in configmap.
 configs: []
 
 ## Extra volumes containing additional files.
