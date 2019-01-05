@@ -1,0 +1,21 @@
+# Scripts files mounted in /usr/share/cassandra/scripts
+{{- if .Values.scripts }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "elassandra.fullname" . }}-scripts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "elassandra.name" . }}
+    chart: {{ template "elassandra.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if .Values.extraLabels }}
+{{ toYaml .Values.extraLabels | indent 4 }}
+{{- end }}
+data:
+{{- range $key, $val := .Values.scripts }}
+  {{ $key }}: |-
+{{  $val | indent 4 }}
+{{- end }}
+{{- end }}

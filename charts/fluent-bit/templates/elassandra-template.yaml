@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fluent-bit.fullname" . }}-elassandra-template
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "fluent-bit.fullname" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+data:
+  fluentbit-template.json: |-
+    {
+    "index_patterns": [ "logstash-*" ],
+    "mappings": {
+      "flb_type": {
+        "_meta": {
+          "version": "6.2.3"
+        },
+        "date_detection": true,
+        "dynamic_templates": [
+          {
+            "strings_as_keyword": {
+              "mapping": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "match_mapping_type": "string"
+            }
+          }
+        ],
+        "properties": {
+          "docker_id": {
+            "cql_collection" : "singleton",
+            "cql_primary_key_order" : 0,
+            "cql_partition_key": true,
+            "type": "keyword"
+          },
+          "ts": {
+            "cql_collection" : "singleton",
+            "cql_primary_key_order" : 1,
+            "type": "date",
+            "cql_type": "timeuuid"
+          },
+          "time": {
+            "cql_collection" : "singleton",
+            "type": "date"
+          },
+          "es_time": {
+            "cql_collection" : "singleton",
+            "type": "date"
+          },
+          "kubernetes": {
+             "cql_collection" : "singleton",
+             "cql_static_column" : "true",
+                  "properties": {
+                    "container_name": {
+                      "cql_collection" : "singleton",
+                      "type": "keyword"
+                    },
+                    "docker_id": {
+                      "cql_collection" : "singleton",
+                      "type": "keyword"
+                    },
+                    "host": {
+                      "cql_collection" : "singleton",
+                      "type": "keyword"
+                    },
+                    "labels": {
+                      "properties": {
+                        "app": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        },
+                        "component": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        },
+                        "controller-revision-hash": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        },
+                        "k8s-app": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        },
+                        "kubernetes_io/cluster-service": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        },
+                        "name": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        },
+                        "pod-template-generation": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        },
+                        "pod-template-hash": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        },
+                        "tier": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        },
+                        "version": {
+                          "cql_collection" : "singleton",
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "namespace_name": {
+                      "cql_collection" : "singleton",
+                      "type": "keyword"
+                    },
+                    "pod_id": {
+                      "cql_collection" : "singleton",
+                      "type": "keyword"
+                    },
+                    "pod_name": {
+                      "cql_collection" : "singleton",
+                      "type": "keyword"
+                    }
+                  }
+                },
+          "log": {
+            "cql_collection" : "singleton",
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 2048
+              }
+            }
+          },
+          "stream": {
+            "cql_collection" : "singleton",
+            "type": "keyword"
+          }
+          }
+         }
+       },
+       "settings": {
+        "index": {
+          "index_insert_only": true,
+          "drop_on_delete_index": true,
+          "search_strategy_class": "RandomSearchStrategy",
+          "replication": "DC1:1",
+          "table_options": "compaction = {'compaction_window_size': '4', 'compaction_window_unit': 'HOURS', 'class': 'org.apache.cassandra.db.compaction.TimeWindowCompactionStrategy'}",
+          "mapping": {
+            "total_fields": {
+              "limit": 10000
+            }
+          },
+          "refresh_interval": "15s"
+        }
+       }
+      }
+    }
+  

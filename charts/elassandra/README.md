@@ -119,6 +119,9 @@ The following table lists the configurable parameters of the Cassandra chart and
 | `config.ports.transport`             | Initdb Arguments                                | `9300`                                                     |
 | `config.ports.agent`                 | The port of the JVM Agent (if any)              | `nil`                                                      |
 | `config.start_rpc`                   | Initdb Arguments                                | `false`                                                    |
+| `configs`                   | Extra configuration mounted in /usr/share/cassandra/conf                                |                                               |
+| `extraVolumeMounts`                  | Mount extra volume(s),                                |                                              |
+| `extraVolumes`                       | Extra volumes                                         |                                              |
 | `persistence.enabled`                | Use a PVC to persist data                       | `true`                                                     |
 | `persistence.storageClass`           | Storage class of backing PVC                    | `nil` (uses alpha storage class annotation)                |
 | `persistence.accessMode`             | Use volume as ReadOnly or ReadWrite             | `ReadWriteOnce`                                            |
@@ -220,6 +223,10 @@ Example of `cassandra-stress` argument
 ```bash
 cassandra-stress mixed ratio\(write=1,read=9\) n=1000000 cl=QUORUM -pop dist=UNIFORM\(1..1000000\) -mode native cql3 -rate threads=50 -log file=~/mixed_autorate_r9w1_1M.log -graph file=test2.html title=test revision=test2 -schema "replication(strategy=NetworkTopologyStrategy, factor=2)"
 ```
+
+## Advanced configuration
+
+Additional configurations defined under **configs** are exposed as configMap mounted in */usr/share/cassandra/conf*.
 
 ## Acknowledgment
 

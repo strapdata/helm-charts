@@ -94,6 +94,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath:  metadata.namespace
+        - name: PERSISTENCE_ENABLED
+          value: "{{ default false .Values.persistence.enabled }}"
         {{- range $key, $val := .Values.env }}
         - name: {{ $key }}
           value: {{ $val | quote }}
@@ -139,9 +141,22 @@ spec:
         args: ["-f", "-d" ]
 {{- end }}
         volumeMounts:
-        - name: data
-          mountPath: /var/lib/cassandra
-        {{- if not .Values.persistence.enabled }}
+          - name: data
+            mountPath: /var/lib/cassandra
+{{- range $key, $val := .Values.scripts }}
+          - name: scripts-volume
+            mountPath: /usr/share/cassandra/scripts/{{ $key }}
+            subPath: {{ $key }}
+{{- end }}
+{{- range $key, $val := .Values.configs }}
+          - name: configs-volume
+            mountPath: /usr/share/cassandra/conf/{{ $key }}
+            subPath: {{ $key }}
+{{- end }}
+{{- if .Values.extraVolumeMounts }}
+{{ toYaml .Values.extraVolumeMounts | indent 8 }}
+{{- end }}
+        {{- if .Values.persistence.enabled }}
         lifecycle:
           preStop:
             exec:
@@ -152,18 +167,23 @@ spec:
             exec:
               command: ["/bin/sh", "-c", "exec nodetool drain"]
         {{- end }}
-{{- if .Values.extraVolumeMounts }}
-{{ toYaml .Values.extraVolumeMounts | indent 8 }}
-{{- end }}
       terminationGracePeriodSeconds: {{ default 30 .Values.podSettings.terminationGracePeriodSeconds }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
-{{- if not .Values.persistence.enabled }}
       volumes:
-      - name: data
-        emptyDir: {}
+        - name: scripts-volume
+          configMap:
+            name: {{ template "elassandra.fullname" . }}-scripts
+{{- if .Values.configs }}
+        - name: configs-volume
+          configMap:
+            name: {{ template "elassandra.fullname" . }}-configs
+{{- end }}
+{{- if not .Values.persistence.enabled }}
+        - name: data
+          emptyDir: {}
 {{- else }}
 {{- if .Values.extraVolumes }}
 {{ toYaml .Values.extraVolumes | indent 6 }}

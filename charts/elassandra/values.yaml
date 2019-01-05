@@ -1,7 +1,7 @@
 ## Elassandra image version
 ## ref: https://hub.docker.com/r/strapdata/
 image:
-  repo: "strapdata/elassandra"
+  repo: "strapdata/elassandra-dev"
   tag: "6.2.3.9"
   pullPolicy: Always
   ## Specify ImagePullSecrets for Pods
@@ -42,7 +42,7 @@ resources: {}
 ## ref: http://docs.datastax.com/en/cassandra/3.0/cassandra/operations/opsTuneJVM.html
 config:
   cluster_name: elassandra
-  cluster_size: 3
+  cluster_size: 1
   seed_size: 1
   num_tokens: 16
   # If you want Cassandra to use this datacenter and rack name,
@@ -102,10 +102,42 @@ securityContext:
 env:
   JVM_OPTS: "-Dcassandra.ring_delay_ms=60000 -XX:+ExitOnOutOfMemoryError -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2"
 
-## Extra config in configmap.
+## Extra config files mounted in /etc/cassandra.
 configs: []
 
-## Extra volumes containing additional files.
+## Extra scripts mounted in /usr/share/cassandra/scripts
+scripts:
+  postStart.sh: |-
+    #!/bin/bash
+    echo "Elassandra started"
+    exit 0
+  preStop.sh: |-
+    #!/bin/sh
+    set -x
+    
+    gracefull_stop() {
+      nodetool disablethrift
+      nodetool disablebinary
+      nodetool disablegossip
+      nodetool flush
+      nodetool drain
+      nodetool stop
+      nodetool stopdaemon
+    }
+    
+    while [ $(nodetool status | awk "/$CASSANDRA_RACK/{ print \$1,\$2 }" | grep -v $POD_IP | awk '{ print $1 }' | grep -v UN) -eq 0 ] ; do
+      echo "Waiting all nodes to recover a NORMAL status"
+      sleep 5
+      pidof java || exit 1
+    done
+
+    if [ "$PERSISTENCE_ENABLED" == "true" ]; then
+       gracefull_stop
+    else 
+       nodetool decommission
+    fi 
+    exit 0
+## Extra volumes containing additional files mounted in /usr/share/cassandra/conf.
 ## (eg. CA certificates)
 ## Ref: https://kubernetes.io/docs/concepts/storage/volumes/
 ##

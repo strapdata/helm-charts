@@ -1,0 +1,30 @@
+env:
+  global:
+  - HELM_URL=https://storage.googleapis.com/kubernetes-helm
+  - HELM_TGZ=helm-v2.10.0-linux-amd64.tar.gz
+  - GH_URL=https://strapdata.github.io/strapcharts
+  - secure: "wakMUJA+verp548dIj8Lf/bS5k2rHnXjFqNRA1oJQ5fJU26sAi28chA3OhVBTlM/Cm1dY8lZ6aihe71ap/jnToGOvNm37ZpljVy6YiOjCA//YP/sksNnOMgtiQYDch4v8bN5HUaKXbZcGhAzzMfSNcGY20Wbsnh/MOKbcbzQggHCC2Q4KUzqQpBxhaZOMQ5nPe93sthanpcVWjzyYvDe9yFWZ+lqw6v9hwvHOHefimslZaEVmMEOOy/M162GsgG2+1pI6AbqCI2CgK8UGREV84rWLwnbYTovg+7lHoZX997syp65h3MLNC29sKFomCmrhjzzx5bhzBk6e6K+eg+ay0qcoEltxrJIl3QLEDumN9oqSiD+SdrbwTdf6a6zcdIUMiT7DhgbZ8j+OBNlQdpyEAJVn723DJ8D5fjf3PtnXmAkqnqvdvLAnrOD++rmSI8SrK4Q+9BVEOP9vaz/3VkWcCQGdBsgEAzRSXGGwyD32ugMhNKO2cL5obqRQShGc+clb0ApUdzxxo+3ioWTur3SGtjzWWyjP48042EbxEGNnnC5/zDqRS83CMios8QEv86LKn9j8C9TI6x2eq+ISPCOHB05Wf5rimeNGueolJO99PHQtBv08Ks0r4mLlyjIiL+NDoWG1mQ9dacnfGT2SBh8CYXUpYuRdZZB02dRf6KrZqM="
+
+before_script:
+- wget -q ${HELM_URL}/${HELM_TGZ}
+- tar xzfv ${HELM_TGZ}
+- export PATH=`pwd`/linux-amd64/:$PATH
+- helm init --client-only
+script:
+- git clone -b gh-pages https://github.com/strapdata/strapcharts.git build
+- |
+  for dir in ${TRAVIS_BUILD_DIR}/charts/*; do
+    helm dep update $dir
+    helm lint $dir
+    helm package -d ${TRAVIS_BUILD_DIR}/build $dir
+  done
+- helm repo index --url ${GH_URL} ${TRAVIS_BUILD_DIR}/build
+deploy:
+  provider: pages
+  local-dir: build
+  skip-cleanup: true
+  keep-history: true
+  github-token: "$GITHUB_TOKEN"
+  committer-from-gh: true
+  on:
+    branch: master

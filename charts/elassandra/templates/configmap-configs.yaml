@@ -1,3 +1,5 @@
+# Config files mounted in /usr/share/cassandra/conf
+# (it cannot be mounted in /etc/cassandra because chowned to cassandra in the docker-entrypoint.sh)
 {{- if .Values.configs }}
 apiVersion: v1
 kind: ConfigMap
@@ -15,6 +17,6 @@ metadata:
 data:
 {{- range $key, $val := .Values.configs }}
   {{ $key }}: |-
-{{ $val | indent 4}}
+{{  $val | indent 4 }}
 {{- end }}
 {{- end }}
