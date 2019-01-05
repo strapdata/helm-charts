@@ -3,21 +3,35 @@ entries:
   cassandra-reaper:
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2019-01-05T16:58:23.728571513Z
+    created: 2019-01-05T18:27:11.477855848Z
     description: A Helm chart for Cassandra-repear
-    digest: 16101a7d65cc27880893b48c594a5d026e9a702299cfdbef0126530ac7632882
+    digest: 92fe2fe44dfdba0cf472b0c15c6755b45487649585a11b6b7461b08f1dd8a143
+    engine: gotpl
+    home: http://cassandra-reaper.io/
+    keywords:
+    - cassandra
+    - elassandra
+    - repair
+    - nosql
+    maintainers:
+    - email: vroyer@strapdata.com
+      name: vroyer
+    - email: barth@strapdata.com
+      name: DBarthe
     name: cassandra-reaper
+    sources:
+    - https://github.com/thelastpickle/cassandra-reaper/tree/master
     urls:
     - https://strapdata.github.io/strapcharts/cassandra-reaper-0.1.0.tgz
     version: 0.1.0
   elassandra:
   - appVersion: 6.2.3.9
-    created: 2019-01-05T16:58:23.73001713Z
+    created: 2019-01-05T18:27:11.479276302Z
     description: Elassandra is a fork of Elasticsearch modified to run on top of Apache
       Cassandra in a scalable and resilient peer-to-peer architecture. Elasticsearch
       code is embedded in Cassanda nodes providing advanced search features on Cassandra
       tables and Cassandra serve as an Elasticsearch data and configuration store.
-    digest: 022e0806b29876594f3720da21b544ab3d812f605f621173e1aef373752a7a96
+    digest: 68fdd1de5b1fd1123051878c63079b6268d39c8987d5b5a70b4ae2afb0d223d0
     engine: gotpl
     home: http://www.elassandra.io
     icon: https://github.com/strapdata/elassandra.io/blob/gh-pages/elassandra.svg
@@ -33,14 +47,16 @@ entries:
     - email: barth@strapdata.com
       name: DBarthe
     name: elassandra
+    sources:
+    - https://github.com/strapdata/elassandra/tree/v6.2.3-strapdata
     urls:
     - https://strapdata.github.io/strapcharts/elassandra-1.0.0.tgz
     version: 1.0.0
   fluent-bit:
   - appVersion: 0.13.0
-    created: 2019-01-05T16:58:23.731279818Z
+    created: 2019-01-05T18:27:11.480471903Z
     description: Fast and Lightweight Log/Data Forwarder for Linux, BSD and OSX
-    digest: 2f577ade619f13864efefcc8307337717dac6e471bc4f0d2b75da03c2f8bdbc7
+    digest: 864b0ac301f937bfd576e73d16c0fed9dce7376e775f9dcf3c287405650156c1
     home: http://fluentbit.io
     icon: http://fluentbit.io/assets/img/logo1-default.png
     keywords:
@@ -59,4 +75,4 @@ entries:
     urls:
     - https://strapdata.github.io/strapcharts/fluent-bit-0.11.1.tgz
     version: 0.11.1
-generated: 2019-01-05T16:58:23.727539284Z
+generated: 2019-01-05T18:27:11.47651835Z
