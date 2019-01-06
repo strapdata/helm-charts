@@ -24,7 +24,7 @@ spec:
       serviceAccountName: {{ template "fluent-bit.serviceAccountName" . }}
       initContainers:
       - name: put-pipeline
-        image: strapdata/curl:0.1
+        image: radial/busyboxplus:curl
         imagePullPolicy: IfNotPresent
         command: ["curl", "-H", "Content-Type: application/json", "-XPUT", "http://{{ .Values.backend.es.host }}:{{ .Values.backend.es.port }}/_ingest/pipeline/fluentbit", "-d", "@/fluent-bit/etc/fluentbit-pipeline.json"]
         volumeMounts:
@@ -32,7 +32,7 @@ spec:
           mountPath: /fluent-bit/etc/fluentbit-pipeline.json
           subPath: fluentbit-pipeline.json
       - name: put-template
-        image: strapdata/curl:0.1
+        image: radial/busyboxplus:curl
         imagePullPolicy: IfNotPresent
         command: ["curl", "-H", "Content-Type: application/json", "-XPUT", "http://{{ .Values.backend.es.host }}:{{ .Values.backend.es.port }}/_template/template_fluentbit", "-d", "@/fluent-bit/etc/fluentbit-template.json"]
         volumeMounts:
