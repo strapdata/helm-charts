@@ -132,6 +132,7 @@ data:
        "settings": {
         "index": {
           "index_insert_only": true,
+          "index_static_columns": true,
           "drop_on_delete_index": true,
           "search_strategy_class": "RandomSearchStrategy",
           "replication": "DC1:1",
