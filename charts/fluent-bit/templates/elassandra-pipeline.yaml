@@ -26,6 +26,11 @@ data:
              "field": "_id",
               "value": "[\"{{ "{{" }}kubernetes.docker_id{{ "}}" }}\",\"{{ "{{" }}ts{{ "}}" }}\"]"
            }
+         },
+         {
+           "remove": {
+             "field": ["kubernetes.docker_id", "time", "es_time"]
+           }
          }
        ]
     }

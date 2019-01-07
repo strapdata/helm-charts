@@ -42,23 +42,11 @@ data:
             "type": "date",
             "cql_type": "timeuuid"
           },
-          "time": {
-            "cql_collection" : "singleton",
-            "type": "date"
-          },
-          "es_time": {
-            "cql_collection" : "singleton",
-            "type": "date"
-          },
           "kubernetes": {
              "cql_collection" : "singleton",
              "cql_static_column" : "true",
                   "properties": {
                     "container_name": {
-                      "cql_collection" : "singleton",
-                      "type": "keyword"
-                    },
-                    "docker_id": {
                       "cql_collection" : "singleton",
                       "type": "keyword"
                     },
@@ -130,7 +118,7 @@ data:
             "fields": {
               "keyword": {
                 "type": "keyword",
-                "ignore_above": 2048
+                "ignore_above": 8192
               }
             }
           },
