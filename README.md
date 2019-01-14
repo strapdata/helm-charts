@@ -16,7 +16,7 @@ Update this HELM repository
 
 Install Elassandra from this HELM repository:
 
-	helm install --namespace "defaut" --set image.repo=strapdata/elassandra --set image.tag=6.2.3.9 strapdata/elassandra
+	helm install --namespace "defaut" --set image.repo=strapdata/elassandra --set image.tag=6.2.3.10 strapdata/elassandra
 
 Install Fluentbit with an Elasticsearch pipeline + template for an optimized storage with Elassandra
 
