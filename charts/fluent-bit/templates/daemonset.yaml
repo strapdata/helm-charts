@@ -26,7 +26,18 @@ spec:
       - name: put-pipeline
         image: radial/busyboxplus:curl
         imagePullPolicy: IfNotPresent
-        command: ["curl", "-H", "Content-Type: application/json", "-XPUT", "http://{{ .Values.backend.es.host }}:{{ .Values.backend.es.port }}/_ingest/pipeline/fluentbit", "-d", "@/fluent-bit/etc/fluentbit-pipeline.json"]
+        command: ["curl", "-H", "Content-Type: application/json", "-XPUT",
+{{- if .Values.backend.es.http_user }}
+          "--user", "{{ .Values.backend.es.http_user }}:{{ .Values.backend.es.http_passwd }}",
+{{- end }}
+{{- if eq .Values.backend.es.tls "on" }}
+{{- if eq .Values.backend.es.tls_verify "off" }}
+          "--insecure",
+{{- else }}
+          "--cacert", "/secure/es-tls-ca.crt",
+{{- end }}
+{{- end }}
+          "http{{if eq .Values.backend.es.tls "on" }}s{{ end }}://{{ .Values.backend.es.host }}:{{ .Values.backend.es.port }}/_ingest/pipeline/fluentbit", "-d", "@/fluent-bit/etc/fluentbit-pipeline.json"]
         volumeMounts:
         - name: pipeline
           mountPath: /fluent-bit/etc/fluentbit-pipeline.json
@@ -34,7 +45,18 @@ spec:
       - name: put-template
         image: radial/busyboxplus:curl
         imagePullPolicy: IfNotPresent
-        command: ["curl", "-H", "Content-Type: application/json", "-XPUT", "http://{{ .Values.backend.es.host }}:{{ .Values.backend.es.port }}/_template/template_fluentbit", "-d", "@/fluent-bit/etc/fluentbit-template.json"]
+        command: ["curl", "-H", "Content-Type: application/json", "-XPUT",
+{{- if .Values.backend.es.http_user }}
+          "--user", "{{ .Values.backend.es.http_user }}:{{ .Values.backend.es.http_passwd }}",
+{{- end }}
+{{- if eq .Values.backend.es.tls "on" }}
+{{- if eq .Values.backend.es.tls_verify "off" }}
+          "--insecure",
+{{- else }}
+          "--cacert", "/secure/es-tls-ca.crt",
+{{- end }}
+{{- end }}
+          "http{{if eq .Values.backend.es.tls "on" }}s{{ end }}://{{ .Values.backend.es.host }}:{{ .Values.backend.es.port }}/_template/template_fluentbit", "-d", "@/fluent-bit/etc/fluentbit-template.json"]
         volumeMounts:
         - name: template
           mountPath: /fluent-bit/etc/fluentbit-template.json
