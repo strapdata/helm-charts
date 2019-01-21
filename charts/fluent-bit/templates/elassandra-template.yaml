@@ -11,7 +11,7 @@ metadata:
 data:
   fluentbit-template.json: |-
     {
-    "index_patterns": [ "logstash-*" ],
+    "index_patterns": [ "logstash-*", "kubernetes_cluster-*" ],
     "mappings": {
       "flb_type": {
         "_meta": {
