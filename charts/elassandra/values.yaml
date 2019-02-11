@@ -1,9 +1,9 @@
 ## Elassandra image version
 ## ref: https://hub.docker.com/r/strapdata/
 image:
-  repo: "strapdata/elassandra-dev"
-  tag: "6.2.3.10"
-  pullPolicy: Always
+  repo: "strapdata/elassandra"
+  tag: "6.2.3.11"
+  pullPolicy: IfNotPresent
   ## Specify ImagePullSecrets for Pods
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
   # pullSecrets: myregistrykey
