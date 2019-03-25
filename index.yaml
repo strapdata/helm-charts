@@ -28,10 +28,10 @@ entries:
   - appVersion: 6.2.3.9
     created: 2019-02-12T10:37:02.323441281Z
     description: Elassandra is a fork of Elasticsearch modified to run on top of Apache
-      Cassandra in a scalable and resilient peer-to-peer architecture. Elasticsearch
-      code is embedded in Cassanda nodes providing advanced search features on Cassandra
-      tables and Cassandra serve as an Elasticsearch data and configuration store.
-    digest: f2c88f887897cb552f1a193fab4dff3a27ee12fbeba789db575004f3a8817a3a
+      Cassandra in a scalable and resilient peer-to-peer architecture. The Elasticsearch
+      code is embedded in the Cassanda nodes providing advanced search features on Cassandra
+      tables and Cassandra serves as an Elasticsearch data and configuration store.
+    digest: 593e4362a42ac7b65bf46a6e944288e5fbacfb4060590a0da80e4027b10d4b11
     engine: gotpl
     home: http://www.elassandra.io
     icon: https://github.com/strapdata/elassandra.io/blob/gh-pages/elassandra.svg
