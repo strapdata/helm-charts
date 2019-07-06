@@ -1,4 +1,4 @@
-# Strapdata HELM Charts [![Build Status](https://travis-ci.org/strapdata/strapcharts.svg?branch=master)](https://travis-ci.org/strapdata/strapcharts)
+# Strapdata HELM Charts [![Build Status](https://travis-ci.org/strapdata/helm-charts.svg?branch=master)](https://travis-ci.org/strapdata/helm-charts)
 
 [![Strapdata Logo](strapdata-logolong.png)](http://www.strapdata.io)
 
