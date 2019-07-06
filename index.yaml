@@ -3,7 +3,7 @@ entries:
   cassandra-reaper:
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2019-02-12T10:37:02.322171693Z
+    created: 2019-07-06T07:53:36.213247933Z
     description: A Helm chart for Cassandra-repear
     digest: 19800b93aa9ff863b2c685dfd0b7215f6b80c1c66178a6fd40eb12f28513c486
     engine: gotpl
@@ -26,12 +26,12 @@ entries:
     version: 0.1.0
   elassandra:
   - appVersion: 6.2.3.9
-    created: 2019-02-12T10:37:02.323441281Z
+    created: 2019-07-06T07:53:36.214555136Z
     description: Elassandra is a fork of Elasticsearch modified to run on top of Apache
       Cassandra in a scalable and resilient peer-to-peer architecture. Elasticsearch
       code is embedded in Cassanda nodes providing advanced search features on Cassandra
       tables and Cassandra serve as an Elasticsearch data and configuration store.
-    digest: f2c88f887897cb552f1a193fab4dff3a27ee12fbeba789db575004f3a8817a3a
+    digest: 407803b052fca78d73fde4364ca2e3a9f56dfe32873cdc3a0e99ba260ffd23aa
     engine: gotpl
     home: http://www.elassandra.io
     icon: https://github.com/strapdata/elassandra.io/blob/gh-pages/elassandra.svg
@@ -54,9 +54,9 @@ entries:
     version: 1.0.0
   fluent-bit:
   - appVersion: 0.13.0
-    created: 2019-02-12T10:37:02.3243904Z
+    created: 2019-07-06T07:53:36.215824045Z
     description: Fast and Lightweight Log/Data Forwarder for Linux, BSD and OSX
-    digest: 3fa0810c92156b1e6792f959a4e3ef6d66e795cd3becc4d6cf4eeb383048bcbc
+    digest: 17b514b42fe58b1492f1b12da0b74a26a812ff90848303cb83e2caaa07ee41ed
     home: http://fluentbit.io
     icon: http://fluentbit.io/assets/img/logo1-default.png
     keywords:
@@ -75,4 +75,4 @@ entries:
     urls:
     - https://strapdata.github.io/helm-charts/fluent-bit-0.11.1.tgz
     version: 0.11.1
-generated: 2019-02-12T10:37:02.321526703Z
+generated: 2019-07-06T07:53:36.212582389Z
