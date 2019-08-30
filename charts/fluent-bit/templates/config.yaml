@@ -85,6 +85,9 @@ data:
 {{ else if .Values.backend.es.index }}
         Index {{ .Values.backend.es.index }}
 {{- end }}
+{{- if .Values.backend.es.logstash_dateformat }}
+        Logstash_DateFormat {{ .Values.backend.es.logstash_dateformat }}
+{{- end }}
 {{- if .Values.backend.es.http_user }}
         HTTP_User {{ .Values.backend.es.http_user }}
         HTTP_Passwd {{ .Values.backend.es.http_passwd }}
