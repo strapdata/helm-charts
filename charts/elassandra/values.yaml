@@ -156,6 +156,9 @@ podLabels: {}
 ## https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 annotations: {}
 
+## Name of Priority Class to assign pods
+# priorityClassName: ""
+
 ## Configure node selector. Edit code below for adding selector to pods
 ## ref: https://kubernetes.io/docs/user-guide/node-selection/
 # selector:
