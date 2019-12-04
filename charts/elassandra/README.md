@@ -128,6 +128,7 @@ The following table lists the configurable parameters of the Cassandra chart and
 | `persistence.size`                   | Size of data volume                             | `10Gi`                                                     |
 | `resources`                          | CPU/Memory resource requests/limits             | Memory: `4Gi`, CPU: `2`                                    |
 | `podManagementPolicy`                | podManagementPolicy of the StatefulSet          | `OrderedReady`                                             |
+| `priorityClassName`                  | priorityClassName of the StatefulSet managed Pods| `""`                                                      |
 | `updateStrategy.type`                | UpdateStrategy of the StatefulSet               | `RollingUpdate`                                            |
 | `livenessProbe.initialDelaySeconds`  | Delay before liveness probe is initiated        | `30`                                                       |
 | `livenessProbe.periodSeconds`        | How often to perform the probe                  | `5`                                                       |
