@@ -11,7 +11,7 @@ metadata:
 data:
   fluentbit-template.json: |-
     {
-    "index_patterns": [ "logstash-*", "kubernetes_cluster-*" ],
+    "index_patterns": [ "fluentbit*" ],
     "mappings": {
       "flb_type": {
         "_meta": {
@@ -134,6 +134,8 @@ data:
           "index_insert_only": true,
           "index_static_columns": true,
           "drop_on_delete_index": true,
+          "keyspace": "fluentbit",
+          "virtual_index": "fluentbit",
           "search_strategy_class": "RandomSearchStrategy",
           "replication": "DC1:1",
           "table_options": "compaction = {'compaction_window_size': '4', 'compaction_window_unit': 'HOURS', 'class': 'org.apache.cassandra.db.compaction.TimeWindowCompactionStrategy'}",
@@ -142,7 +144,9 @@ data:
               "limit": 10000
             }
           },
-          "refresh_interval": "15s"
+          "refresh_interval": "15s",
+          "partition_function_class": "TimeUUIDPartitionFunction",
+          "partition_function": "toDayIndex fluentbit-%1$tY.%1$tm.%1$td ts"
         }
        }
       }
