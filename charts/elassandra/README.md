@@ -7,7 +7,7 @@ An [Elassandra](http://www.elassandra.io) Chart for Kubernetes.
 To install the Elassandra Chart into your Kubernetes cluster (This Chart requires persistent volume by default, you may need to create a storage class before install chart. To create storage class, see Persist data section)
 
 ```bash
-helm install --namespace "default" -n "elassandra" incubator/elassandra
+helm install --namespace "default" -n "elassandra" strapdata/elassandra
 ```
 
 After installation succeeds, you can get a status of Chart
@@ -149,7 +149,7 @@ helm upgrade --set config.cluster_size=5 elassandra incubator/elassandra
 ```
 
 ### Switch form Elassandra / Cassandra
-You can switch from Elassandra (Elasticsearch enabled) to pure Cassandra (Elasticsearch disabled) by setting the `elasticsearch.enabled` to `true` or `false`, this change java main class. 
+You can switch from Elassandra (Elasticsearch enabled) to pure Cassandra (Elasticsearch disabled) by setting the `elasticsearch.enabled` to `true` or `false`, this change java main class.
 
 **WARNING**: As soon as you have created one elasticsearch index in your elassandra cluster, the CQL schema requires that all nodes runs the elassandra binaries. Running a node with standard cassandra binaries will causes a *ClassNotFounException* when trying to instanciate the elasticsearch custom secondary index.
 
