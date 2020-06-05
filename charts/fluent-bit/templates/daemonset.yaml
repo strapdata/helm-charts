@@ -17,14 +17,14 @@ spec:
         release: {{ .Release.Name }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
-{{- if .Values.metrics.prometheus.scrape }}
-        prometheus.io/scrape: "{{ .Values.metrics.prometheus.scrape }}"
-{{- end }}
-{{- if .Values.metrics.service.port }}
+{{- if .Values.metrics.prometheus }}
+        prometheus.io/scrape: "{{ default "true" .Values.metrics.prometheus.scrape | quote }}"
+        {{- if .Values.metrics.service.port }}
         prometheus.io/port: "{{ .Values.metrics.service.port }}"
-{{- end }}
-{{- if .Values.metrics.prometheus.path }}
+        {{- end }}
+        {{- if .Values.metrics.prometheus.path }}
         prometheus.io/path: "{{ .Values.metrics.prometheus.path }}"
+        {{- end }}
 {{- end }}
 {{- if .Values.podAnnotations }}
 {{ toYaml .Values.podAnnotations | indent 8 }}
