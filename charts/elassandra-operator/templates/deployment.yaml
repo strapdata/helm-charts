@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ template "elassandra-operator.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "elassandra-operator.fullname" . }}
+spec:
+  replicas: {{ default "1" .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "elassandra-operator.name" . }}
+      operator: elassandra
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "elassandra-operator.name" . }}
+        operator: elassandra
+        release: {{ .Release.Name }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8081"
+        prometheus.io/path: "/prometheus"
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range $pullSecret := .Values.image.pullSecrets }}
+        - name: {{ $pullSecret }}
+      {{- end }}
+      {{- end }}
+      terminationGracePeriodSeconds: 45
+      initContainers:
+        # build a PKCS12 keystore from the TLS secret for the micronaut server
+        - name: init-tls-cert
+          image: frapsoft/openssl
+          command: ['sh', '-c', "openssl pkcs12 -export -in /tls-secret/tls.crt -inkey /tls-secret/tls.key -out /tls/operator.p12 -passout pass:changeit"]
+          volumeMounts:
+          - name: tls-secret-volume
+            readOnly: true
+            mountPath: "/tls-secret"
+          - name: tls-volume
+            mountPath: "/tls"
+      containers:
+        - name: {{ template "elassandra-operator.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          terminationMessagePolicy: "FallbackToLogsOnError"
+#          Uncomment and modify to change operator behaviour via start up flags
+#          command: ["java"]
+#          args: ["-jar", "/opt/lib/elassandra-operator/elassandra-operator.jar", "--no-version-check=false"]
+          volumeMounts:
+            - name: tls-volume
+              mountPath: "/tls"
+          ports:
+            - containerPort: 443
+              name: https
+            - containerPort: 5005
+              name: jdb
+            - containerPort: 7199
+              name: jmx
+          readinessProbe:
+            httpGet:
+              scheme: HTTPS
+              path: /ready
+              port: 443
+            initialDelaySeconds: 5
+            periodSeconds: 10
+# https://github.com/kubernetes/kubernetes/issues/55807#issuecomment-459933280
+# preStop maybe call but it is not blocking so the Strapkop Container maybe terminated before the preStop run...
+# nevertheless, shutdown/graceful call should only prevent new reconciliation and not delete all DC
+# otherwise DC may be removed when the operator pod is manually removed to restart it
+# DataCenter deletion should be managed by strapkube or by a helm delete before deleting the operator...
+          lifecycle:
+            preStop:
+              httpGet:
+                scheme: HTTPS
+                path: /shutdown/graceful
+                port: 443
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          env:
+          {{- if .Values.namespace }}
+          - name: OPERATOR_NAMESPACE
+            value: {{ .Values.namespace }}
+          {{- end }}
+          - name: OPERATOR_SERVICE_NAME
+            value: {{ template "elassandra-operator.name" . }}
+          {{- if .Values.env }}
+          {{- range $key, $val := .Values.env }}
+          - name: {{ $key }}
+            value: {{ $val | quote }}
+          {{- end }}
+          {{- end }}
+      volumes:
+      - name: tls-volume
+        emptyDir: {}
+      - name: tls-secret-volume
+        secret:
+          secretName: {{ template "elassandra-operator.name" . }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
+    {{- if .Values.rbacEnable }}
+      serviceAccountName: {{ template "elassandra-operator.fullname" . }}
+    {{- end }}
+    {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+{{- end }}
+

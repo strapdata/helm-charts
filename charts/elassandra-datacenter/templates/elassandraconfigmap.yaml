@@ -1,0 +1,21 @@
+# Config files mounted in /etc/cassandra
+{{- if .Values.configs }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "elassandra.resourceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "elassandra.name" . }}
+    chart: {{ template "elassandra.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if .Values.labels }}
+{{ toYaml .Values.labels | indent 4 }}
+{{- end }}
+data:
+{{- range $key, $val := .Values.configs }}
+  {{ $key }}: |-
+{{ $val | indent 4 }}
+{{- end }}
+{{- end }}

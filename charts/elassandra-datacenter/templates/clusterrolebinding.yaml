@@ -1,0 +1,18 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: {{ template "elassandra.resourceName" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "elassandra.resourceName" . }}nodeinfo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "elassandra.resourceName" . }}-node-reader
+subjects:
+  - kind: ServiceAccount
+    name: nodeinfo
+    namespace: {{ .Release.Namespace }}

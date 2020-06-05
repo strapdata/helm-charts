@@ -1,0 +1,229 @@
+# Default values for elassandra.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicas: 1
+parked: false
+autoScaleMode: "MANUAL"
+
+image:
+  elassandraRepository: strapdata/elassandra-node-dev
+  tag: 6.8.4.5
+  pullPolicy: Always
+  pullSecrets: []
+
+# Elassandra node affinity STRICT or SLACK
+nodeAffinityPolicy: STRICT
+annotations: {}
+customLabels: {}
+appServiceAccount:
+priorityClassName:
+
+# Resource config
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+
+# Storage config
+dataVolumeClaim:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 500Mi
+# PVC delete policy, KEEP_PVC or DELETE_PVC
+decommissionPolicy: "DELETE_PVC"
+
+# Kubernetes Network config
+networking:
+  hostPortEnabled: false
+  hostNetworkEnabled: false
+  nodeLoadBalancerEnabled: false
+
+# When hostNetwork or hostPort is enabled, and k8s node have a public IP address,
+# externalDns publish a DNS name for seed nodes allowing to be joined by remote DCs.
+externalDns:
+  enabled: false
+  root: "xxx"
+  domain: "example.com"
+  ttl: 300
+
+# Cassandra reaper config
+reaper:
+  image: strapdata/cassandra-reaper:2.1.0-SNAPSHOT-strapkop
+  enabled: true
+  jwtSecret: "68d45d8f-419f-429e-8ba0-7b475cba795d"
+  ingressSuffix:
+  ingressAnnotations: {}
+  loggingLevel: "INFO"
+
+managedKeyspaces: {}
+#  - keyspace: gravitee
+#    rf: 3
+#    role: gravitee
+#    login: true
+#    superuser: false
+#    secretKey: gravitee
+#    grantStatements:
+#      - "GRANT gravitee TO gravitee"
+
+# WebHook URL called when datacenter is reconcilied or deleted.
+# URL template support {namespace}, {clusterName}, {datacenterName}, {phase}, {replicas}, {readyReplicas}
+webHookUrl:
+
+# JVM config
+jvm:
+  options: {}
+  computeJvmMemorySettings: true
+  jdbPort: 4242
+  # JMXMP is mandatory
+  jmxPort: 7199
+  jmxmpEnabled: true
+  jmxmpOverSSL: true
+
+# Cassandra configuration
+cassandra:
+  config: {}
+  ssl: true
+  authentication: CASSANDRA
+  # Tell Cassandra to use the local IP address (INTERNAL_IP).
+  snitchPreferLocal: true
+  # Cassandra seeds config
+  remoteSeeds: []
+  remoteSeeders: []
+  nativePort: 39042
+  storagePort: 37000
+  sslStoragePort: 37001
+
+# Elasticsearch config
+elasticsearch:
+  enabled: true
+  httpPort: 9200
+  transportPort: 9300
+  ingressEnabled: false
+  loadBalancerEnabled: false
+  loadBalancerIp:
+  config: {}
+  datacenter:
+    group:
+    tags: []
+  enterprise:
+    enabled: true
+    jmx: true
+    https: true
+    ssl: true
+    aaa:
+      enabled: true
+      audit: true
+    cbs: true
+  kibana:
+    enabled: true
+    image: "docker.elastic.co/kibana/kibana-oss"
+    ingressSuffix:
+    ingressAnnotations: {}
+    #tag: 6.8.4
+    #version: 1
+    spaces:
+      - name: ""
+        keyspaces: []
+
+# Prometheus metrics exporter
+prometheus:
+  enabled: true
+  port: 9500
+
+# periodic backups
+scheduledBackups:
+
+# Override some config files in /etc/cassandra
+configs:
+  logback.xml: |-
+    <!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+    -->
+
+    <configuration scan="true" debug="false">
+    <jmxConfigurator />
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${CASSANDRA_LOGDIR}/system.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+    <fileNamePattern>${CASSANDRA_LOGDIR}/system.log.%i.zip</fileNamePattern>
+    <minIndex>1</minIndex>
+    <maxIndex>20</maxIndex>
+    </rollingPolicy>
+
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+    <maxFileSize>500MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+    <pattern>%date{ISO8601} %-5level [%thread] %F:%L %M %msg%n</pattern>
+    <!-- old-style log format
+    <pattern>%5level [%thread] %date{ISO8601} %F (line %L) %msg%n</pattern>
+    -->
+    </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+    <pattern>%date{ISO8601} %-5level [%thread] %C.%M:%L %msg%n</pattern>
+    </encoder>
+    </appender>
+
+    <appender name="AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${CASSANDRA_LOGDIR}/audit.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+    <fileNamePattern>${CASSANDRA_LOGDIR}/audit.log.%i.zip</fileNamePattern>
+    <minIndex>1</minIndex>
+    <maxIndex>20</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+    <maxFileSize>500MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+    <pattern>%date{ISO8601} %msg%n</pattern>
+    </encoder>
+    </appender>
+
+    <logger name="com.thinkaurelius.thrift" level="ERROR"/>
+    <logger name="org.apache" level="WARN" />
+
+    <!-- Use env variables to customize logging level from docker -->
+    <logger name="org.apache.cassandra" level="${LOGBACK_org_apache_cassandra:-WARN}" />
+    <logger name="org.apache.cassandra.service.CassandraDaemon" level="${LOGBACK_org_apache_cassandra_service_CassandraDaemon:-INFO}" />
+
+    <logger name="org.elassandra.shard" level="${LOGBACK_org_elassandra_shard:-INFO}" />
+    <logger name="org.elassandra.indices" level="${LOGBACK_org_elassandra_indices:-INFO}" />
+    <logger name="org.elassandra.index" level="${LOGBACK_org_elassandra_index:-WARN}" />
+    <logger name="org.elassandra.discovery" level="${LOGBACK_org_elassandra_discovery:-WARN}" />
+    <logger name="org.elasticsearch.cluster.service" level="${LOGBACK_org_elassandra_cluster_service:-DEBUG}" />
+    <logger name="org.elasticsearch.cluster.metadata" level="DEBUG" />
+    <logger name="org.elasticsearch" level="${LOGBACK_org_elasticsearch:-WARN}" />
+
+    <root level="INFO">
+      <appender-ref ref="STDOUT" />
+    </root>
+
+    <logger name="LogbackAuditor" level="DEBUG" additivity="false" >
+       <appender-ref ref="AUDIT" />
+    </logger>
+
+    </configuration>

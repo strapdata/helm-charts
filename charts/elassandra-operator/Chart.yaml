@@ -1,0 +1,21 @@
+apiVersion: v1
+appVersion: "1.1"
+description: A Helm chart for the Elassandra operator
+icon: https://github.com/strapdata/elassandra.io/blob/gh-pages/elassandra.svg
+name: elassandra-operator
+version: 0.3.0
+keywords:
+  - cassandra
+  - elasticsearch
+  - elassandra
+  - database
+  - nosql
+  - operator
+home: http://www.strapdata.com
+maintainers:
+  - name: vroyer
+    email: vroyer@strapdata.com
+  - name: DBarthe
+    email: barth@strapdata.com
+  - name: eleleu
+    email: eleleu@strapdata.com

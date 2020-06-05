@@ -1,0 +1,19 @@
+{{- if .Values.rbacEnable }}
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: {{ template "elassandra-operator.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "elassandra-operator.fullname" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "elassandra-operator.fullname" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ template "elassandra-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}
