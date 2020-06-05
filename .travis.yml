@@ -1,7 +1,7 @@
 env:
   global:
-  - HELM_URL=https://storage.googleapis.com/kubernetes-helm
-  - HELM_TGZ=helm-v2.10.0-linux-amd64.tar.gz
+  - HELM_URL=https://get.helm.sh
+  - HELM_TGZ=helm-v2.14.3-linux-amd64.tar.gz
   - GH_URL=https://strapdata.github.io/helm-charts
   - secure: "W5/Qtf/yMIJDefUj5h94ev/+qpUKLdkfR2MdYCwGaITN9Kt3mb4sStbdjIllIoYF2K09yUXWXGzFQU66RcK09y6fm0Iu3GTJV8wDft/CR7QtCe8reoGt6GXufqce8+GljRg771G/NN1lD9Lhd5RsfR9LIR+QVIirlBiPOVfhSklXVKxaj4xeL9uQzBrSSlN6UUeDWE+vPFjB+ictxxZ5ElkK0G+I5YRK2qQuPiHynmE2H5JyuXDU73WKstDcAGT3n5o9mFyVGg3361j4LglvBOMowUFL/0daBrEsMkeYyjUPbCO3XVzNn5q0dgKPcVfbCdStyERo/9s+5KQHXfgtf5+3MClENEP/NWREM3SxH9n763bNiQEpbX/XVDOI0e88GGnKZ2cmVxeRXjfxCA42qTEibhIXAYMUIZ4jghXXXOcDH9dFsR2xou9JAC4rZ0sp9ze10YhB7+RDLKPsO64Q6CJHm1WbLG1Mwo/0fopRKlUhsz6KVZXj3QM7cM6Brk/1hlvNJcmIzQ3JPZJktCLVkqkqgBKke4/SrMsTWK0apmO0uKnsCZX6csEcN9NYpJOGPhgbGTkkjkNSSS4IirhS8wKTtIwjWhlkyBe/C9pXxZ/N/dRIeqz7XreW4yFAzBCWxVCXIjrGPgNJipcFDrM6JoYwvB1oyAmZy9BIhxIFImc="
 
