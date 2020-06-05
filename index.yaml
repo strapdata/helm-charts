@@ -3,7 +3,7 @@ entries:
   cassandra-reaper:
   - apiVersion: v1
     appVersion: "1.0"
-    created: 2020-06-05T14:31:09.835829139Z
+    created: "2020-06-05T14:51:12.898028498Z"
     description: A Helm chart for Cassandra-repear
     digest: 19800b93aa9ff863b2c685dfd0b7215f6b80c1c66178a6fd40eb12f28513c486
     engine: gotpl
@@ -26,12 +26,12 @@ entries:
     version: 0.1.0
   elassandra:
   - appVersion: 6.2.3.9
-    created: 2020-06-05T14:31:09.837120538Z
+    created: "2020-06-05T14:51:12.898599079Z"
     description: Elassandra is a fork of Elasticsearch modified to run on top of Apache
       Cassandra in a scalable and resilient peer-to-peer architecture. Elasticsearch
       code is embedded in Cassanda nodes providing advanced search features on Cassandra
       tables and Cassandra serve as an Elasticsearch data and configuration store.
-    digest: f273cf7b45c6ae4171ad0e52d7f423559534fe2cbc79a72fad5edb206714be8a
+    digest: 09c9c05e3de977a2b9acfbfed96ab9a447918ca0944775e0104af5c2d461730d
     engine: gotpl
     home: http://www.elassandra.io
     icon: https://github.com/strapdata/elassandra.io/blob/gh-pages/elassandra.svg
@@ -52,11 +52,64 @@ entries:
     urls:
     - https://strapdata.github.io/helm-charts/elassandra-1.0.0.tgz
     version: 1.0.0
+  elassandra-datacenter:
+  - apiVersion: v1
+    appVersion: "1.1"
+    created: "2020-06-05T14:51:12.899035091Z"
+    description: A Helm chart for creating Elassandra datacenter using the Elassandra
+      operator
+    digest: 9fcab7b0af27c16abc332c02871e54b3df2383230e885642eedeb9da584608b7
+    home: http://www.strapdata.com
+    icon: https://github.com/strapdata/elassandra.io/blob/gh-pages/elassandra.svg
+    keywords:
+    - cassandra
+    - elasticsearch
+    - elassandra
+    - database
+    - nosql
+    - operator
+    maintainers:
+    - email: vroyer@strapdata.com
+      name: vroyer
+    - email: barth@strapdata.com
+      name: DBarthe
+    - email: eleleu@strapdata.com
+      name: eleleu
+    name: elassandra-datacenter
+    urls:
+    - https://strapdata.github.io/helm-charts/elassandra-datacenter-0.3.0.tgz
+    version: 0.3.0
+  elassandra-operator:
+  - apiVersion: v1
+    appVersion: "1.1"
+    created: "2020-06-05T14:51:12.900388477Z"
+    description: A Helm chart for the Elassandra operator
+    digest: 2ba6a1fd38ecc2c22e93ebea5d71004f43d78e025400f435aa206d7a43664007
+    home: http://www.strapdata.com
+    icon: https://github.com/strapdata/elassandra.io/blob/gh-pages/elassandra.svg
+    keywords:
+    - cassandra
+    - elasticsearch
+    - elassandra
+    - database
+    - nosql
+    - operator
+    maintainers:
+    - email: vroyer@strapdata.com
+      name: vroyer
+    - email: barth@strapdata.com
+      name: DBarthe
+    - email: eleleu@strapdata.com
+      name: eleleu
+    name: elassandra-operator
+    urls:
+    - https://strapdata.github.io/helm-charts/elassandra-operator-0.3.0.tgz
+    version: 0.3.0
   fluent-bit:
   - appVersion: 0.13.0
-    created: 2020-06-05T14:31:09.8381855Z
+    created: "2020-06-05T14:51:12.901453506Z"
     description: Fast and Lightweight Log/Data Forwarder for Linux, BSD and OSX
-    digest: d6dd64de62d8c357eddd5124f4211ff79d777b20f5be32a5a47599399a97ddb2
+    digest: 8c8b123866218c642d885c21c986b777a0485cd1a176b0f68aca9cb4335c67cd
     home: http://fluentbit.io
     icon: http://fluentbit.io/assets/img/logo1-default.png
     keywords:
@@ -75,4 +128,4 @@ entries:
     urls:
     - https://strapdata.github.io/helm-charts/fluent-bit-0.11.1.tgz
     version: 0.11.1
-generated: 2020-06-05T14:31:09.834936189Z
+generated: "2020-06-05T14:51:12.897507077Z"
