@@ -1,0 +1,20 @@
+{{- $root := . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  hosts.override: |
+    hosts nodes.hosts {{ .Values.nodes.domain }} {
+{{- range $entry := .Values.nodes.hosts }}
+        {{ $entry.value }} {{ $entry.name }}.{{ $root.Values.nodes.domain }} {{ $entry.name }}
+{{- end }}
+        fallthrough
+    }
+  dns.server: |
+    {{ .Values.forwarders.domain }}:53 {
+        errors
+        cache 30
+        forward {{ .Values.forwarders.domain }}{{ range $host := .Values.forwarders.hosts }} {{ $host }}{{ end }}
+    }

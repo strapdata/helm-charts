@@ -1,0 +1,14 @@
+# Default values for elassandra-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+forwarders:
+  domain: "test.strapkube.com"
+  hosts: [ 40.90.4.8, 64.4.48.8, 13.107.24.8, 13.107.160.8 ]
+
+nodes:
+  domain: "northeurope.cloudapp.azure.com"
+  hosts:
+#    - name: aks-nodepool1-37464561-0
+#      value: 40.127.224.166
+
