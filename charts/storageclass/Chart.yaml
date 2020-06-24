@@ -1,5 +1,11 @@
 apiVersion: v1
 appVersion: "1.0"
-description: A Helm chart to deploy GCP custom storageclass
-name: storageclass-gcp
+description: A Helm chart to deploy Kubernetes custom storageclass
+name: storageclass
 version: 0.1.0
+home: http://www.strapdata.com
+maintainers:
+- name: vroyer
+  email: vroyer@strapdata.com
+- name: DBarthe
+  email: barth@strapdata.com
