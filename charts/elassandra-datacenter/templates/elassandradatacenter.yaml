@@ -1,10 +1,13 @@
-apiVersion: elassandra.strapdata.com/v1
+apiVersion: elassandra.strapdata.com/v1beta1
 kind: ElassandraDatacenter
 metadata:
   name: {{ template "elassandra.resourceName" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ template "elassandra.name" . }}
+    app: "elassandra"
+    app.kubernetes.io/managed-by: "elassandra-operator"
+    elassandra.strapdata.com/cluster: {{ include "elassandra.clusterName" . }}
+    elassandra.strapdata.com/datacenter: {{ include "elassandra.datacenterName" . }}
     chart: {{ template "elassandra.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -17,10 +20,12 @@ spec:
   replicas: {{ default "1" .Values.replicas }}
   parked: {{ default "false" .Values.parked }}
   autoScaleMode: {{ default "MANUAL" .Values.autoScaleMode }}
-  elassandraImage: "{{ .Values.image.elassandraRepository }}:{{ .Values.image.tag }}"
+  nodeAffinityPolicy: {{ default "STRICT" .Values.nodeAffinityPolicy | quote }}
+  maxPodUnavailable: {{ default 1 .Values.maxPodUnavailable }}
   {{- if .Values.webHookUrl }}
   webHookUrl: {{ .Values.webHookUrl }}
   {{- end }}
+  elassandraImage: "{{ .Values.image.elassandraRepository }}:{{ .Values.image.tag }}"
   imagePullPolicy: {{ .Values.image.pullPolicy }}
   {{- if .Values.image.pullSecrets }}
   imagePullSecrets:
@@ -28,21 +33,14 @@ spec:
     - {{ $pullSecret }}
   {{- end }}
   {{- end }}
-  {{- if .Values.appServiceAccount }}
-  appServiceAccount: {{ .Values.appServiceAccount  }}
+  {{- if .Values.serviceAccount }}
+  serviceAccount: {{ .Values.serviceAccount  }}
   {{ else }}
-  appServiceAccount: {{ template "elassandra.serviceAccount" . }}
+  serviceAccount: {{ template "elassandra.serviceAccount" . }}
   {{- end }}
-  {{- if .Values.priorityClassName }}
-  priorityClassName: {{ .Values.priorityClassName  }}
-  {{- end }}
-  {{- if .Values.annotations }}
-  annotations:
-{{ toYaml .Values.annotations | indent 4 }}
-  {{- end }}
-  {{- if .Values.customLabels }}
-  customLabels:
-{{ toYaml .Values.customLabels | indent 4 }}
+  {{- if .Values.podTemplate }}
+  podTemplate:
+{{ toYaml .Values.podTemplate | indent 4 }}
   {{- end }}
   resources:
 {{ toYaml .Values.resources | indent 4 }}
@@ -70,6 +68,7 @@ spec:
   userSecretVolumeSource:
 {{ toYaml .Values.userSecretVolumeSource | indent 4 }}
 {{- end }}
+{{- if .Values.elasticsearch }}
   elasticsearch:
     enabled: {{ default "true" .Values.elasticsearch.enabled | quote }}
     httpPort: {{ default "9200" .Values.elasticsearch.httpPort | quote }}
@@ -91,31 +90,22 @@ spec:
     {{- end }}
     config:
 {{ toYaml .Values.elasticsearch.config | indent 6 }}
-    {{- if .Values.elasticsearch.kibana }}
-    kibana:
-      enabled: {{ .Values.elasticsearch.kibana.enabled | quote }}
-      {{- if .Values.elasticsearch.kibana.ingressSuffix }}
-      ingressSuffix: {{ .Values.elasticsearch.kibana.ingressSuffix | quote }}
-      {{- end }}
-      {{- if .Values.elasticsearch.kibana.ingressAnnotations }}
-      ingressAnnotations:
-{{ toYaml .Values.elasticsearch.kibana.ingressAnnotations | indent 8 }}
-      {{- end }}
-      {{- if .Values.elasticsearch.kibana.image }}
-      {{- if .Values.elasticsearch.kibana.tag }}
-      image:  "{{ .Values.elasticsearch.kibana.image }}:{{ .Values.elasticsearch.kibana.tag }}"
-      {{- else }}
-      image:  "{{ .Values.elasticsearch.kibana.image }}:{{ template "kibana.version" . }}"
-      {{- end }}
-      {{- if .Values.elasticsearch.kibana.version }}
-      version: {{ .Values.elasticsearch.kibana.version }}
-      {{- end }}
-      {{- end }}
-      {{- if .Values.elasticsearch.kibana.spaces }}
-      spaces:
-{{ toYaml .Values.elasticsearch.kibana.spaces | indent 8 }}
-      {{- end }}
+{{- end }}
+{{- if .Values.kibana }}
+  kibana:
+    enabled: {{ .Values.kibana.enabled | quote }}
+    {{- if .Values.kibana.image }}
+    {{- if .Values.kibana.tag }}
+    image:  "{{ .Values.kibana.image }}:{{ .Values.kibana.tag }}"
+    {{- else }}
+    image:  "{{ .Values.kibana.image }}:{{ template "kibana.version" . }}"
     {{- end }}
+    {{- end }}
+    {{- if .Values.kibana.spaces }}
+    spaces:
+{{ toYaml .Values.kibana.spaces | indent 6 }}
+    {{- end }}
+{{- end }}
   prometheus:
     enabled: {{ default "false" .Values.prometheus.enabled | quote }}
     port: {{ default "9500" .Values.prometheus.port | quote }}
@@ -125,27 +115,31 @@ spec:
     {{- if .Values.reaper.image }}
     image: {{ .Values.reaper.image }}
     {{- end }}
-    {{- if .Values.reaper.ingressSuffix }}
-    ingressSuffix: {{ .Values.reaper.ingressSuffix }}
+    {{- if .Values.reaper.ingressHost }}
+    ingressHost: {{ .Values.reaper.ingressHost }}
+    {{- end }}
+    {{- if .Values.reaper.ingressAdminHost }}
+    ingressAdminHost: {{ .Values.reaper.ingressAdminHost }}
+    {{- end }}
     {{- if .Values.reaper.ingressAnnotations }}
     ingressAnnotations:
 {{ toYaml .Values.reaper.ingressAnnotations | indent 6 }}
     {{- end }}
-    {{- end }}
     jwtSecret: {{ default "68d45d8f-419f-429e-8ba0-7b475cba795d" .Values.reaper.jwtSecret }}
     loggingLevel: {{ default "INFO" .Values.reaper.loggingLevel }}
-{{- end }}
-{{- if .Values.externalDns }}
-  externalDns:
-    enabled: {{ default "false" .Values.externalDns.enabled | quote }}
-    root: {{ default "xxx" .Values.externalDns.root | quote }}
-    domain: {{ .Values.externalDns.domain | quote }}
-    ttl: {{ default "300" .Values.externalDns.ttl }}
+    {{- if .Values.reaper.podTemplate }}
+    podTemplate:
+    {{ toYaml .Values.reaper.podTemplate | indent 6 }}
+    {{- end }}
 {{- end }}
   networking:
     hostPortEnabled: {{ default "false" .Values.networking.hostPortEnabled | quote }}
     hostNetworkEnabled: {{ default "false" .Values.networking.hostNetworkEnabled | quote }}
-    nodeLoadBalancerEnabled: {{ default "false" .Values.networking.nodeLoadBalancerEnabled | quote }}
+    externalDns:
+      enabled: {{ default "false" .Values.networking.externalDns.enabled | quote }}
+      root: {{ default "xxx" .Values.networking.externalDns.root | quote }}
+      domain: {{ .Values.networking.externalDns.domain | quote }}
+      ttl: {{ default "300" .Values.networking.externalDns.ttl }}
   jvm:
     computeJvmMemorySettings: {{ default "true" .Values.jvm.computeJvmMemorySettings | quote }}
     jdbPort: {{ default "-1" .Values.jvm.jdbPort  | quote }}

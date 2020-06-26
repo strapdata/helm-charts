@@ -1,5 +1,5 @@
 The Elassandra Operator has been installed. Check its status by running:
   kubectl --namespace {{ .Release.Namespace }} get pods -l "app={{ template "elassandra-operator.name" . }},release={{ .Release.Name }}"
 
-Visit http://doc.elassandra-operator.io/ for instructions on how
-to create & configure Elassandra clusters using the Operator.
+Visit http://operator.elassandra.io/ for instructions on how
+to create & configure Elassandra clusters using the Elassandra-Operator.

@@ -1,4 +1,4 @@
----
+{{- if .Values.rbacEnabled }}
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -14,5 +14,6 @@ roleRef:
   name: {{ template "elassandra.resourceName" . }}-node-reader
 subjects:
   - kind: ServiceAccount
-    name: nodeinfo
+    name: {{ template "elassandra.resourceName" . }}-nodeinfo
     namespace: {{ .Release.Namespace }}
+{{- end }}

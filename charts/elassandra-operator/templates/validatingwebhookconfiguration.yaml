@@ -1,3 +1,4 @@
+{{- if .Values.webhook.enabled }}
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
 metadata:
@@ -13,7 +14,7 @@ webhooks:
   - name: "elassandradatacenter-webhook.elassandra.strapdata.com"
     rules:
       - apiGroups: ["elassandra.strapdata.com"]
-        apiVersions: ["v1"]
+        apiVersions: ["v1beta1"]
         operations: ["CREATE", "UPDATE"]
         resources: ["elassandradatacenters"]
         scope: "*"
@@ -22,9 +23,10 @@ webhooks:
       service:
         name: {{ template "elassandra-operator.name" . }}
         namespace: {{ .Release.Namespace }}
-        path: "/datacenter/validation"
+        path: "/validation"
     admissionReviewVersions: ["v1", "v1beta1"]
-    failurePolicy: "Fail"
+    failurePolicy: {{ default "Fail" .Values.webhook.failurePolicy | quote }}
     matchPolicy: "Equivalent"
     sideEffects: None
-    timeoutSeconds: 10
+    timeoutSeconds: {{ default 15 .Values.webhook.timeoutSeconds }}
+{{- end }}

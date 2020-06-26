@@ -6,17 +6,17 @@ parked: false
 autoScaleMode: "MANUAL"
 
 image:
-  elassandraRepository: strapdata/elassandra-node-dev
-  tag: 6.8.4.5
+  elassandraRepository: strapdata/elassandra-node
+  tag: latest
   pullPolicy: Always
   pullSecrets: []
 
 # Elassandra node affinity STRICT or SLACK
 nodeAffinityPolicy: STRICT
-annotations: {}
-customLabels: {}
-appServiceAccount:
-priorityClassName:
+maxPodUnavailable: 1
+rbacEnabled: true
+serviceAccount:
+podTemplate: {}
 
 # Resource config
 resources:
@@ -42,24 +42,11 @@ decommissionPolicy: "DELETE_PVC"
 networking:
   hostPortEnabled: false
   hostNetworkEnabled: false
-  nodeLoadBalancerEnabled: false
-
-# When hostNetwork or hostPort is enabled, and k8s node have a public IP address,
-# externalDns publish a DNS name for seed nodes allowing to be joined by remote DCs.
-externalDns:
-  enabled: false
-  root: "xxx"
-  domain: "example.com"
-  ttl: 300
-
-# Cassandra reaper config
-reaper:
-  image: strapdata/cassandra-reaper:2.1.0-SNAPSHOT-strapkop
-  enabled: true
-  jwtSecret: "68d45d8f-419f-429e-8ba0-7b475cba795d"
-  ingressSuffix:
-  ingressAnnotations: {}
-  loggingLevel: "INFO"
+  externalDns:
+    enabled: false
+    root: "xxx"
+    domain: "example.com"
+    ttl: 300
 
 managedKeyspaces: {}
 #  - keyspace: gravitee
@@ -71,13 +58,8 @@ managedKeyspaces: {}
 #    grantStatements:
 #      - "GRANT gravitee TO gravitee"
 
-# WebHook URL called when datacenter is reconcilied or deleted.
-# URL template support {namespace}, {clusterName}, {datacenterName}, {phase}, {replicas}, {readyReplicas}
-webHookUrl:
-
 # JVM config
 jvm:
-  options: {}
   computeJvmMemorySettings: true
   jdbPort: 4242
   # JMXMP is mandatory
@@ -87,7 +69,6 @@ jvm:
 
 # Cassandra configuration
 cassandra:
-  config: {}
   ssl: true
   authentication: CASSANDRA
   # Tell Cassandra to use the local IP address (INTERNAL_IP).
@@ -98,6 +79,17 @@ cassandra:
   nativePort: 39042
   storagePort: 37000
   sslStoragePort: 37001
+
+# Cassandra reaper config
+reaper:
+  image: strapdata/cassandra-reaper:2.1.0-SNAPSHOT-strapkop
+  enabled: true
+  jwtSecret: "68d45d8f-419f-429e-8ba0-7b475cba795d"
+  ingressAnnotations: {}
+  ingressAdminHost:
+  ingressHost:
+  loggingLevel: "INFO"
+  podTemplate: {}
 
 # Elasticsearch config
 elasticsearch:
@@ -120,24 +112,22 @@ elasticsearch:
       enabled: true
       audit: true
     cbs: true
-  kibana:
-    enabled: true
-    image: "docker.elastic.co/kibana/kibana-oss"
-    ingressSuffix:
-    ingressAnnotations: {}
-    #tag: 6.8.4
-    #version: 1
-    spaces:
-      - name: ""
-        keyspaces: []
+
+# Kibana configuration
+kibana:
+  enabled: true
+  image: "docker.elastic.co/kibana/kibana-oss"
+  spaces:
+    - name: ""
+      keyspaces: []
+      podTemplate:
+      ingressSuffix:
+      ingressAnnotations: {}
 
 # Prometheus metrics exporter
 prometheus:
   enabled: true
   port: 9500
-
-# periodic backups
-scheduledBackups:
 
 # Override some config files in /etc/cassandra
 configs:
@@ -176,9 +166,6 @@ configs:
     </triggeringPolicy>
     <encoder>
     <pattern>%date{ISO8601} %-5level [%thread] %F:%L %M %msg%n</pattern>
-    <!-- old-style log format
-    <pattern>%5level [%thread] %date{ISO8601} %F (line %L) %msg%n</pattern>
-    -->
     </encoder>
     </appender>
 
@@ -209,7 +196,6 @@ configs:
     <!-- Use env variables to customize logging level from docker -->
     <logger name="org.apache.cassandra" level="${LOGBACK_org_apache_cassandra:-WARN}" />
     <logger name="org.apache.cassandra.service.CassandraDaemon" level="${LOGBACK_org_apache_cassandra_service_CassandraDaemon:-INFO}" />
-
     <logger name="org.elassandra.shard" level="${LOGBACK_org_elassandra_shard:-INFO}" />
     <logger name="org.elassandra.indices" level="${LOGBACK_org_elassandra_indices:-INFO}" />
     <logger name="org.elassandra.index" level="${LOGBACK_org_elassandra_index:-WARN}" />
@@ -221,7 +207,6 @@ configs:
     <root level="INFO">
       <appender-ref ref="STDOUT" />
     </root>
-
     <logger name="LogbackAuditor" level="DEBUG" additivity="false" >
        <appender-ref ref="AUDIT" />
     </logger>

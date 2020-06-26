@@ -1,4 +1,4 @@
-{{- if or (.Values.networking.hostPortEnabled) (.Values.networking.hostNetworkEnabled) }}
+{{- if or (.Values.networking.hostPortEnabled) (.Values.networking.hostNetworkEnabled) (.Values.networking.externalDns.enabled) }}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -8,7 +8,7 @@ metadata:
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
-  name: {{ .Release.Name }}-nodeinfo
+  name: {{ template "elassandra.resourceName" . }}-nodeinfo
 ---
 # Create a service account API token bound to the nodeinfo serviceaccount
 # Must to be created after serviceaccount, otherwise deleted by the token controller
@@ -16,10 +16,10 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .Release.Name }}-nodeinfo
+  name: {{ template "elassandra.resourceName" . }}-nodeinfo
   namespace: {{ .Release.Namespace }}
   annotations:
-    kubernetes.io/service-account.name: nodeinfo
+    kubernetes.io/service-account.name: {{ template "elassandra.resourceName" . }}-nodeinfo
 #    helm.sh/hook: post-install
 type: kubernetes.io/service-account-token
 {{- end }}

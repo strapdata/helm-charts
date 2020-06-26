@@ -4,6 +4,6 @@ nameOverride: "ssd-b"
 # Cloud availibility zone
 zone: "europe-west1-b"
 
-# Storage type and provisioner
-type: "pd-ssd"
-provisioner: "kubernetes.io/gce-pd"
+# Storage parameters and provisioner
+parameters:
+provisioner:

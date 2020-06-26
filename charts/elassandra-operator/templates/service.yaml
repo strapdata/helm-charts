@@ -11,12 +11,12 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 443
-      targetPort: 443
+    - port: {{ default 443 .Values.serverPort }}
+      targetPort: {{ default 443 .Values.serverPort }}
       protocol: TCP
       name: https
-    - port: 8081
-      targetPort: 8081
+    - port: {{ default 8081 .Values.managementPort }}
+      targetPort: {{ default 8081 .Values.managementPort }}
       protocol: TCP
       name: endpoints
   selector:

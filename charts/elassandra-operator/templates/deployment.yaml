@@ -21,8 +21,8 @@ spec:
         operator: elassandra
         release: {{ .Release.Name }}
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "8081"
+        prometheus.io/scrape: {{ default "true" .Values.prometheusEnabled | quote }}
+        prometheus.io/port: {{ default "8081" .Values.managementPort | quote }}
         prometheus.io/path: "/prometheus"
     spec:
       {{- if .Values.image.pullSecrets }}
@@ -48,46 +48,56 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           terminationMessagePolicy: "FallbackToLogsOnError"
-#          Uncomment and modify to change operator behaviour via start up flags
-#          command: ["java"]
-#          args: ["-jar", "/opt/lib/elassandra-operator/elassandra-operator.jar", "--no-version-check=false"]
           volumeMounts:
             - name: tls-volume
               mountPath: "/tls"
           ports:
-            - containerPort: 443
+            - containerPort: {{ default 443 .Values.serverPort }}
               name: https
+            - containerPort: {{ default 8081 .Values.managementPort }}
+              name: management
+            - containerPort: {{ default "-1" .Values.jmxmpPort }}
+              name: jmxmp
             - containerPort: 5005
               name: jdb
-            - containerPort: 7199
-              name: jmx
           readinessProbe:
             httpGet:
               scheme: HTTPS
               path: /ready
-              port: 443
+              port: {{ default 443 .Values.serverPort }}
             initialDelaySeconds: 5
             periodSeconds: 10
-# https://github.com/kubernetes/kubernetes/issues/55807#issuecomment-459933280
-# preStop maybe call but it is not blocking so the Strapkop Container maybe terminated before the preStop run...
-# nevertheless, shutdown/graceful call should only prevent new reconciliation and not delete all DC
-# otherwise DC may be removed when the operator pod is manually removed to restart it
-# DataCenter deletion should be managed by strapkube or by a helm delete before deleting the operator...
           lifecycle:
             preStop:
               httpGet:
                 scheme: HTTPS
                 path: /shutdown/graceful
-                port: 443
+                port: {{ default 443 .Values.serverPort }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           env:
-          {{- if .Values.namespace }}
-          - name: OPERATOR_NAMESPACE
-            value: {{ .Values.namespace }}
-          {{- end }}
           - name: OPERATOR_SERVICE_NAME
             value: {{ template "elassandra-operator.name" . }}
+          - name: OPERATOR_SERVER_PORT
+            value: {{ default "443" .Values.serverPort | quote }}
+          - name: OPERATOR_MANAGEMENT_PORT
+            value: {{ default "8081" .Values.managementPort | quote }}
+          - name: OPERATOR_JMXMP_PORT
+            value: {{ default "-1" .Values.jmxmpPort | quote }}
+          - name: OPERATOR_PROMETHEUS_ENABLED
+            value: {{ default "true" .Values.prometheusEnabled | quote }}
+          - name: OPERATOR_TASKS_RETENTION
+            value: {{ default "7D" .Values.taskRetention | quote }}
+          - name: ADDRESS_TRANSLATOR_DNS_DOMAIN
+            value: {{ default "internal.strapdata.com" .Values.translatorDnsDomain | quote }}
+          - name: OPERATOR_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          {{- if .Values.watchNamespace }}
+          - name: OPERATOR_WATCH_NAMESPACE
+            value: {{ .Values.watchNamespace }}
+          {{- end }}
           {{- if .Values.env }}
           {{- range $key, $val := .Values.env }}
           - name: {{ $key }}
@@ -104,7 +114,7 @@ spec:
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
     {{- end }}
-    {{- if .Values.rbacEnable }}
+    {{- if .Values.rbacEnabled }}
       serviceAccountName: {{ template "elassandra-operator.fullname" . }}
     {{- end }}
     {{- if .Values.tolerations }}
