@@ -99,7 +99,6 @@ elasticsearch:
   ingressEnabled: false
   loadBalancerEnabled: false
   loadBalancerIp:
-  config: {}
   datacenter:
     group:
     tags: []

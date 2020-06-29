@@ -70,7 +70,7 @@ spec:
 {{- end }}
 {{- if .Values.elasticsearch }}
   elasticsearch:
-    enabled: {{ default "true" .Values.elasticsearch.enabled | quote }}
+    enabled: {{ .Values.elasticsearch.enabled | quote }}
     httpPort: {{ default "9200" .Values.elasticsearch.httpPort | quote }}
     transportPort: {{ default "9300" .Values.elasticsearch.transportPort | quote }}
     loadBalancerEnabled: {{ default "false" .Values.elasticsearch.loadBalancerEnabled | quote }}
@@ -88,8 +88,6 @@ spec:
     enterprise:
 {{ toYaml .Values.elasticsearch.enterprise | indent 6 }}
     {{- end }}
-    config:
-{{ toYaml .Values.elasticsearch.config | indent 6 }}
 {{- end }}
 {{- if .Values.kibana }}
   kibana:
@@ -148,8 +146,6 @@ spec:
     jmxmpOverSSL: {{ default "true" .Values.jvm.jmxmpOverSSL | quote }}
   cassandra:
     workload: {{ default "READ_WRITE" .Values.workload  | quote }}
-    config:
-{{ toYaml .Values.cassandra.config | indent 6 }}
     commitlogsInitContainer: {{ default "false" .Values.cassandra.commitlogsInitContainer | quote }}
     nativePort: {{ default "9042" .Values.cassandra.nativePort | quote }}
     storagePort: {{ default "7000" .Values.cassandra.storagePort | quote }}
